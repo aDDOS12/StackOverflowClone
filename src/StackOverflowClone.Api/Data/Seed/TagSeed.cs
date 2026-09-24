@@ -1,0 +1,62 @@
+﻿using StackOverflowClone.Api.Entities;
+
+namespace StackOverflowClone.Api.Data.Seed;
+
+public static class TagSeed
+{
+    public static Tag[] GetTags() =>
+        [
+        new() { Id = 1, TagName = "javascript"},
+        new() { Id = 2, TagName = "python"},
+        new() { Id = 3, TagName = "java"},
+        new() { Id = 4, TagName = "c#"},
+        new() { Id = 5, TagName = "php"},
+        new() { Id = 6, TagName = "android"},
+        new() { Id = 7, TagName = "html"},
+        new() { Id = 8, TagName = "jquery"},
+        new() { Id = 9, TagName = "c++"},
+        new() { Id = 10, TagName = "css"},
+        new() { Id = 11, TagName = "ios"},
+        new() { Id = 12, TagName = "sql"},
+        new() { Id = 13, TagName = "mysql"},
+        new() { Id = 14, TagName = "r"},
+        new() { Id = 15, TagName = "reactjs"},
+        new() { Id = 16, TagName = "node.js"},
+        new() { Id = 17, TagName = "arrays"},
+        new() { Id = 18, TagName = "c"},
+        new() { Id = 19, TagName = "asp.net"},
+        new() { Id = 20, TagName = "json"},
+        new() { Id = 21, TagName = "python-3.x"},
+        new() { Id = 22, TagName = ".net"},
+        new() { Id = 23, TagName = "ruby-on-rails"},
+        new() { Id = 24, TagName = "sql-server"},
+        new() { Id = 25, TagName = "swift"},
+        new() { Id = 26, TagName = "django"},
+        new() { Id = 27, TagName = "angular"},
+        new() { Id = 28, TagName = "objective-c"},
+        new() { Id = 29, TagName = "excel"},
+        new() { Id = 30, TagName = "pandas"},
+        new() { Id = 31, TagName = "angularjs"},
+        new() { Id = 32, TagName = "regex"},
+        new() { Id = 33, TagName = "typescript"},
+        new() { Id = 34, TagName = "ruby"},
+        new() { Id = 35, TagName = "linux"},
+        new() { Id = 36, TagName = "ajax"},
+        new() { Id = 37, TagName = "iphone"},
+        new() { Id = 38, TagName = "vba"},
+        new() { Id = 39, TagName = "xml"},
+        new() { Id = 40, TagName = "laravel"},
+        new() { Id = 41, TagName = "spring"},
+        new() { Id = 42, TagName = "asp.net-mvc"},
+        new() { Id = 43, TagName = "database"},
+        new() { Id = 44, TagName = "wordpress"},
+        new() { Id = 45, TagName = "string"},
+        new() { Id = 46, TagName = "postgresql"},
+        new() { Id = 47, TagName = "docker"},
+        new() { Id = 48, TagName = "git"},
+        new() { Id = 49, TagName = "asp.net-core"},
+        new() { Id = 50, TagName = "entity-framework-core"},
+        new() { Id = 51, TagName = "linq"},
+        new() { Id = 52, TagName = "unit-testing"}
+        ];
+}

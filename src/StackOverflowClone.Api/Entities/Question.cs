@@ -2,7 +2,7 @@
 
 namespace StackOverflowClone.Api.Entities;
 
-public class Question : IVoteable
+public class Question : IVoteable, ISoftDeletable
 {
     public int Id { get; set; }
     public string Title { get; set; } = default!;
@@ -16,4 +16,5 @@ public class Question : IVoteable
     public List<Comment> Comments { get; set; } = new List<Comment>();
     public List<QuestionVote> QuestionVotes { get; set; } = new List<QuestionVote>();
     public List<Tag> Tags { get; set; } = new List<Tag>();
+    public DateTime? DeletedAt { get; set; }
 }

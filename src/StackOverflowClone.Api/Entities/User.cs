@@ -1,6 +1,8 @@
-﻿namespace StackOverflowClone.Api.Entities;
+﻿using StackOverflowClone.Api.Interfaces;
 
-public class User
+namespace StackOverflowClone.Api.Entities;
+
+public class User : ISoftDeletable
 {
     public Guid Id { get; set; }
     public string Username { get; set; } = default!;
@@ -14,4 +16,5 @@ public class User
     public List<QuestionVote> QuestionVotes { get; set; } = new List<QuestionVote>();
     public List<AnswerVote> AnswerVotes { get; set; } = new List<AnswerVote>();
     public List<CommentVote> CommentVotes { get; set; } = new List<CommentVote>();
+    public DateTime? DeletedAt { get; set; }
 }

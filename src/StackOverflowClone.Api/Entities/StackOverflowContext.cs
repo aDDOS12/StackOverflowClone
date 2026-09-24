@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StackOverflowClone.Api.Data;
+using StackOverflowClone.Api.Data.Seed;
 
 namespace StackOverflowClone.Api.Entities;
 
@@ -28,16 +30,19 @@ public class StackOverflowContext : DbContext
             eb.Property(q => q.UpdatedAt).ValueGeneratedOnUpdate();
 
             eb.HasMany(q => q.Answers)
-            .WithOne(q => q.Question)
-            .HasForeignKey(q => q.QuestionId);
+            .WithOne(a => a.Question)
+            .HasForeignKey(a => a.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(q => q.Comments)
-            .WithOne(q => q.Question)
-            .HasForeignKey(q => q.QuestionId);
+            .WithOne(c => c.Question)
+            .HasForeignKey(c => c.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(q => q.QuestionVotes)
-            .WithOne(q => q.Question)
-            .HasForeignKey(q => q.QuestionId);
+            .WithOne(qv => qv.Question)
+            .HasForeignKey(qv => qv.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(q => q.Tags)
             .WithMany(t => t.Questions)
@@ -55,6 +60,8 @@ public class StackOverflowContext : DbContext
                     qt.HasKey(x => new { x.TagId, x.QuestionId });
                 }
                 );
+
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, q => q.DeletedAt == null);
         });
 
         modelBuilder.Entity<Answer>(eb =>
@@ -66,24 +73,35 @@ public class StackOverflowContext : DbContext
             eb.Property(a => a.UpdatedAt).ValueGeneratedOnUpdate();
 
             eb.HasMany(a => a.Comments)
-            .WithOne(a => a.Answer)
-            .HasForeignKey(a => a.AnswerId);
+            .WithOne(c => c.Answer)
+            .HasForeignKey(c => c.AnswerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(a => a.AnswerVotes)
-            .WithOne(a => a.Answer)
-            .HasForeignKey(a => a.AnswerId);
+            .WithOne(av => av.Answer)
+            .HasForeignKey(av => av.AnswerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, a => a.DeletedAt == null);
         });
 
         modelBuilder.Entity<Comment>(eb =>
         {
             eb.Property(c => c.Content).HasColumnType("nvarchar(600)");
             eb.Property(c => c.Score).HasDefaultValue(0);
-            eb.Property(c => c.CreatedAt).HasDefaultValueSql("getutcdate");
+            eb.Property(c => c.CreatedAt).HasDefaultValueSql("getutcdate()");
             eb.Property(c => c.UpdatedAt).ValueGeneratedOnUpdate();
 
             eb.HasMany(c => c.CommentVotes)
-            .WithOne(c => c.Comment)
-            .HasForeignKey(c => c.CommentId);
+            .WithOne(cv => cv.Comment)
+            .HasForeignKey(cv => cv.CommentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            eb.ToTable(c => c.HasCheckConstraint(
+                "CK_Comments_ExactlyOneParent",
+                "([QuestionId] IS NOT NULL AND [AnswerId] IS NULL) OR ([QuestionId] IS NULL AND [AnswerId] IS NOT NULL"));
+
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, q => q.DeletedAt == null);
         });
 
         modelBuilder.Entity<User>(eb =>
@@ -94,28 +112,34 @@ public class StackOverflowContext : DbContext
             eb.Property(u => u.AccountCreated).HasDefaultValueSql("getutcdate()");
 
             eb.HasMany(u => u.Questions)
-            .WithOne(u => u.User)
-            .HasForeignKey(u => u.UserId);
+            .WithOne(q => q.User)
+            .HasForeignKey(q => q.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(u => u.Answers)
-            .WithOne(u => u.User)
-            .HasForeignKey(u => u.UserId);
+            .WithOne(a => a.User)
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(u => u.Comments)
-            .WithOne(u => u.User)
-            .HasForeignKey(u => u.UserId);
+            .WithOne(c => c.User)
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(u => u.QuestionVotes)
-            .WithOne(u => u.User)
-            .HasForeignKey(u => u.UserId);
+            .WithOne(qv => qv.User)
+            .HasForeignKey(qv => qv.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(u => u.AnswerVotes)
-            .WithOne(u => u.User)
-            .HasForeignKey(u => u.UserId);
+            .WithOne(av => av.User)
+            .HasForeignKey(av => av.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasMany(u => u.CommentVotes)
-            .WithOne(u => u.User)
-            .HasForeignKey(u => u.UserId);
+            .WithOne(cv => cv.User)
+            .HasForeignKey(cv => cv.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<AnswerVote>(eb =>
@@ -135,16 +159,10 @@ public class StackOverflowContext : DbContext
 
         modelBuilder.Entity<Tag>(eb =>
         {
-            eb.HasData(new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { },
-                new Tag() { });
+            eb.Property(t => t.TagName).HasMaxLength(35);
+            eb.HasIndex(t => t.TagName).IsUnique();
+
+            eb.HasData(TagSeed.GetTags());
         });
     }
 }
