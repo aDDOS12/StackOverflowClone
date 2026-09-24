@@ -2,7 +2,7 @@
 
 namespace StackOverflowClone.Api.Entities;
 
-public class Comment : IVoteable, ISoftDeletable
+public class Comment : IVoteable, ISoftDeletable, IHasTimestamps
 {
     public int Id { get; set; }
     public string Content { get; set; } = default!;

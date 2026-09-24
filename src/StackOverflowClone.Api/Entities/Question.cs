@@ -2,7 +2,7 @@
 
 namespace StackOverflowClone.Api.Entities;
 
-public class Question : IVoteable, ISoftDeletable
+public class Question : IVoteable, ISoftDeletable, IHasTimestamps
 {
     public int Id { get; set; }
     public string Title { get; set; } = default!;

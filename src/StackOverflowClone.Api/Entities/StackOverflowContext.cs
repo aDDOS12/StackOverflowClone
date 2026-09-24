@@ -26,8 +26,6 @@ public class StackOverflowContext : DbContext
             eb.Property(q => q.Title).HasColumnType("nvarchar(150)");
             eb.Property(q => q.Content).HasColumnType("nvarchar(max)");
             eb.Property(q => q.Score).HasDefaultValue(0);
-            eb.Property(q => q.CreatedAt).HasDefaultValueSql("getutcdate()");
-            eb.Property(q => q.UpdatedAt).ValueGeneratedOnUpdate();
 
             eb.HasMany(q => q.Answers)
             .WithOne(a => a.Question)
@@ -69,8 +67,6 @@ public class StackOverflowContext : DbContext
             eb.Property(a => a.Content).HasColumnType("nvarchar(max)");
             eb.Property(a => a.Score).HasDefaultValue(0);
             eb.Property(a => a.IsAccepted).HasDefaultValue(false);
-            eb.Property(a => a.CreatedAt).HasDefaultValueSql("getutcdate()");
-            eb.Property(a => a.UpdatedAt).ValueGeneratedOnUpdate();
 
             eb.HasMany(a => a.Comments)
             .WithOne(c => c.Answer)
@@ -89,8 +85,6 @@ public class StackOverflowContext : DbContext
         {
             eb.Property(c => c.Content).HasColumnType("nvarchar(600)");
             eb.Property(c => c.Score).HasDefaultValue(0);
-            eb.Property(c => c.CreatedAt).HasDefaultValueSql("getutcdate()");
-            eb.Property(c => c.UpdatedAt).ValueGeneratedOnUpdate();
 
             eb.HasMany(c => c.CommentVotes)
             .WithOne(cv => cv.Comment)
@@ -109,7 +103,6 @@ public class StackOverflowContext : DbContext
             eb.Property(u => u.Username).HasColumnType("varchar(30)");
             eb.Property(u => u.Email).HasColumnType("varchar(254)");
             eb.Property(u => u.PasswordHash).HasColumnType("nvarchar(256)");
-            eb.Property(u => u.AccountCreated).HasDefaultValueSql("getutcdate()");
 
             eb.HasMany(u => u.Questions)
             .WithOne(q => q.User)
