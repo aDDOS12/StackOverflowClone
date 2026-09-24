@@ -5,7 +5,7 @@
         //foreign key
         public Guid UserId { get; set; }
         //navigation property
-        public User User { get; set; }
+        public User User { get; set; } = default!;
         public int Value { get; set; }
     }
 }

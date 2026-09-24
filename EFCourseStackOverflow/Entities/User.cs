@@ -3,9 +3,9 @@
     public class User
     {
         public Guid Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
+        public string Username { get; set; } = default!;
+        public string Email { get; set; } = default!;
+        public string PasswordHash { get; set; } = default!;
         public DateTime AccountCreated { get; set; }
         //initialize empty list in order to avoid nullable variable
         public List<Question> Questions { get; set; } = new List<Question>();

@@ -5,7 +5,6 @@
         //foreign key
         public int AnswerId { get; set; }
         //navigation property
-        public Answer Answer { get; set; }
-        public Guid UserId { get; set; }
+        public Answer Answer { get; set; } = default!;
     }
 }
