@@ -2,6 +2,7 @@
 using StackOverflowClone.Api.Entities;
 using StackOverflowClone.Api.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 namespace StackOverflowClone.Api;
 
@@ -13,8 +14,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddAuthorization();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddOpenApi();
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddSingleton<TimestampsAndSoftDeleteInterceptor>();
 
@@ -28,8 +28,8 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.MapOpenApi();
+            app.MapScalarApiReference();
         }
 
         //app.UseHttpsRedirection();
