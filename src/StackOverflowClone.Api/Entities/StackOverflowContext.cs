@@ -23,9 +23,8 @@ public class StackOverflowContext : DbContext
     {
         modelBuilder.Entity<Question>(eb =>
         {
-            eb.Property(q => q.Title).HasColumnType("nvarchar(150)");
-            eb.Property(q => q.Content).HasColumnType("nvarchar(max)");
-            eb.Property(q => q.Score).HasDefaultValue(0);
+            eb.Property(q => q.Title).HasMaxLength(150);
+            eb.Property(q => q.Content).HasMaxLength(30000);
 
             eb.HasMany(q => q.Answers)
             .WithOne(a => a.Question)
@@ -66,9 +65,7 @@ public class StackOverflowContext : DbContext
 
         modelBuilder.Entity<Answer>(eb =>
         {
-            eb.Property(a => a.Content).HasColumnType("nvarchar(max)");
-            eb.Property(a => a.Score).HasDefaultValue(0);
-            eb.Property(a => a.IsAccepted).HasDefaultValue(false);
+            eb.Property(a => a.Content).HasMaxLength(30000);
 
             eb.HasMany(a => a.Comments)
             .WithOne(c => c.Answer)
@@ -85,8 +82,7 @@ public class StackOverflowContext : DbContext
 
         modelBuilder.Entity<Comment>(eb =>
         {
-            eb.Property(c => c.Content).HasColumnType("nvarchar(600)");
-            eb.Property(c => c.Score).HasDefaultValue(0);
+            eb.Property(c => c.Content).HasMaxLength(600);
 
             eb.HasMany(c => c.CommentVotes)
             .WithOne(cv => cv.Comment)
