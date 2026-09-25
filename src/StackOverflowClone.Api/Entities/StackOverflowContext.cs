@@ -15,9 +15,9 @@ public class StackOverflowContext : DbContext
     public DbSet<Answer> Answers { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Tag> Tags { get; set; }
-    public DbSet<QuestionVote> QuestionVote { get; set; }
-    public DbSet<AnswerVote> AnswerVote { get; set; }
-    public DbSet<CommentVote> CommentVote { get; set; }
+    public DbSet<QuestionVote> QuestionVotes { get; set; }
+    public DbSet<AnswerVote> AnswerVotes { get; set; }
+    public DbSet<CommentVote> CommentVotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,7 +55,9 @@ public class StackOverflowContext : DbContext
 
                 qt =>
                 {
+                    qt.ToTable("QuestionTags");
                     qt.HasKey(x => new { x.TagId, x.QuestionId });
+                    qt.HasQueryFilter(QueryFilterNames.SoftDelete, x => x.Question.DeletedAt == null);
                 }
                 );
 
@@ -93,16 +95,16 @@ public class StackOverflowContext : DbContext
 
             eb.ToTable(c => c.HasCheckConstraint(
                 "CK_Comments_ExactlyOneParent",
-                "([QuestionId] IS NOT NULL AND [AnswerId] IS NULL) OR ([QuestionId] IS NULL AND [AnswerId] IS NOT NULL"));
+                "([QuestionId] IS NOT NULL AND [AnswerId] IS NULL) OR ([QuestionId] IS NULL AND [AnswerId] IS NOT NULL)"));
 
             eb.HasQueryFilter(QueryFilterNames.SoftDelete, q => q.DeletedAt == null);
         });
 
         modelBuilder.Entity<User>(eb =>
         {
-            eb.Property(u => u.Username).HasColumnType("varchar(30)");
-            eb.Property(u => u.Email).HasColumnType("varchar(254)");
-            eb.Property(u => u.PasswordHash).HasColumnType("nvarchar(256)");
+            eb.Property(u => u.Username).HasMaxLength(30);
+            eb.Property(u => u.Email).HasMaxLength(254);
+            eb.Property(u => u.PasswordHash).HasMaxLength(256);
 
             eb.HasMany(u => u.Questions)
             .WithOne(q => q.User)
@@ -138,16 +140,19 @@ public class StackOverflowContext : DbContext
         modelBuilder.Entity<AnswerVote>(eb =>
         {
             eb.HasKey(av => new { av.UserId, av.AnswerId });
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, av => av.Answer.DeletedAt == null);
         });
 
         modelBuilder.Entity<QuestionVote>(eb =>
         {
             eb.HasKey(qv => new { qv.UserId, qv.QuestionId });
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, qv => qv.Question.DeletedAt == null);
         });
 
         modelBuilder.Entity<CommentVote>(eb =>
         {
             eb.HasKey(cv => new { cv.UserId, cv.CommentId });
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, cv => cv.Comment.DeletedAt == null);
         });
 
         modelBuilder.Entity<Tag>(eb =>
