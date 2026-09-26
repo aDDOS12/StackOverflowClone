@@ -21,4 +21,9 @@
     <Folder Include="Logic\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StackOverflowClone.Application\StackOverflowClone.Application.csproj" />
+    <ProjectReference Include="..\StackOverflowClone.Infrastructure\StackOverflowClone.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
