@@ -1,7 +1,5 @@
-using StackOverflowClone.Infrastructure.Persistence.Interceptors;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using StackOverflowClone.Infrastructure.Persistence;
+using StackOverflowClone.Infrastructure;
 
 namespace StackOverflowClone.Api;
 
@@ -14,13 +12,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddAuthorization();
         builder.Services.AddOpenApi();
-        builder.Services.AddSingleton(TimeProvider.System);
-        builder.Services.AddSingleton<TimestampsAndSoftDeleteInterceptor>();
-
-        builder.Services.AddDbContext<StackOverflowContext>((serviceProvider, options) =>
-            options
-            .UseSqlServer(builder.Configuration.GetConnectionString("StackOverflowDbConnectionString"))
-            .AddInterceptors(serviceProvider.GetRequiredService<TimestampsAndSoftDeleteInterceptor>()));
+        builder.Services.AddInfrastructure(builder.Configuration);
 
         var app = builder.Build();
 
