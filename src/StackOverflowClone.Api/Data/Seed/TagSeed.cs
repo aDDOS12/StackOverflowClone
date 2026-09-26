@@ -1,4 +1,4 @@
-﻿using StackOverflowClone.Api.Entities;
+﻿using StackOverflowClone.Domain.Entities;
 
 namespace StackOverflowClone.Api.Data.Seed;
 

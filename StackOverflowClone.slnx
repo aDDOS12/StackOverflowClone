@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="src/StackOverflowClone.Api/StackOverflowClone.Api.csproj" />
+  <Project Path="src/StackOverflowClone.Application/StackOverflowClone.Application.csproj" Id="a21d06d4-a0d6-4103-86f1-9cb47ad0bf65" />
+  <Project Path="src/StackOverflowClone.Domain/StackOverflowClone.Domain.csproj" Id="8f15b75a-4e66-4db7-a1f8-6ea1e9a1e404" />
+  <Project Path="src/StackOverflowClone.Infrastructure/StackOverflowClone.Infrastructure.csproj" Id="6be96fdb-0723-4fd0-8437-0d5f7c6ebfc7" />
 </Solution>

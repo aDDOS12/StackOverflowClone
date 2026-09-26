@@ -1,4 +1,4 @@
-﻿namespace StackOverflowClone.Api.Entities;
+﻿namespace StackOverflowClone.Domain.Entities;
 
 public class QuestionVote : Vote
 {

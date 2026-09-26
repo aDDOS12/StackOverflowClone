@@ -1,6 +1,6 @@
-﻿using StackOverflowClone.Api.Interfaces;
+﻿using StackOverflowClone.Domain.Common;
 
-namespace StackOverflowClone.Api.Entities;
+namespace StackOverflowClone.Domain.Entities;
 
 public class Comment : IVoteable, ISoftDeletable, IHasTimestamps
 {

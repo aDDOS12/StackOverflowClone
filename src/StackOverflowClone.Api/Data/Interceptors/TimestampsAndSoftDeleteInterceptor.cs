@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using StackOverflowClone.Api.Interfaces;
+using StackOverflowClone.Domain.Common;
 
 namespace StackOverflowClone.Api.Data.Interceptors;
 

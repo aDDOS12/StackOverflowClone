@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StackOverflowClone.Api.Entities;
+using StackOverflowClone.Domain.Entities;
 using StackOverflowClone.Api.Data.Seed;
 
 namespace StackOverflowClone.Api.Data;

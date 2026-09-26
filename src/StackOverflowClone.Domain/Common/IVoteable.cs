@@ -1,4 +1,4 @@
-﻿namespace StackOverflowClone.Api.Interfaces;
+﻿namespace StackOverflowClone.Domain.Common;
 
 public interface IVoteable
 {

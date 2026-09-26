@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StackOverflowClone.Api.Data;
-using StackOverflowClone.Api.Entities;
+using StackOverflowClone.Domain.Entities;
 
 #nullable disable
 
@@ -26,7 +26,7 @@ namespace StackOverflowClone.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Answer", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Answer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.AnswerVote", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.AnswerVote", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -90,7 +90,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("AnswerVotes");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Comment", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,7 +139,7 @@ namespace StackOverflowClone.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.CommentVote", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.CommentVote", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -157,7 +157,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("CommentVotes");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Question", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Question", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,7 +197,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.QuestionTag", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.QuestionTag", b =>
                 {
                     b.Property<int>("TagId")
                         .HasColumnType("int");
@@ -212,7 +212,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("QuestionTags", (string)null);
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.QuestionVote", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.QuestionVote", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -230,7 +230,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("QuestionVotes");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Tag", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -513,7 +513,7 @@ namespace StackOverflowClone.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.User", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -548,15 +548,15 @@ namespace StackOverflowClone.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Answer", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Answer", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.Question", "Question")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("StackOverflowClone.Api.Entities.User", "User")
+                    b.HasOne("StackOverflowClone.Domain.Entities.User", "User")
                         .WithMany("Answers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -567,15 +567,15 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.AnswerVote", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.AnswerVote", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.Answer", "Answer")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Answer", "Answer")
                         .WithMany("AnswerVotes")
                         .HasForeignKey("AnswerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("StackOverflowClone.Api.Entities.User", "User")
+                    b.HasOne("StackOverflowClone.Domain.Entities.User", "User")
                         .WithMany("AnswerVotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -586,19 +586,19 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Comment", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.Answer", "Answer")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Answer", "Answer")
                         .WithMany("Comments")
                         .HasForeignKey("AnswerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("StackOverflowClone.Api.Entities.Question", "Question")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Question", "Question")
                         .WithMany("Comments")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("StackOverflowClone.Api.Entities.User", "User")
+                    b.HasOne("StackOverflowClone.Domain.Entities.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -611,15 +611,15 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.CommentVote", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.CommentVote", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.Comment", "Comment")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Comment", "Comment")
                         .WithMany("CommentVotes")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("StackOverflowClone.Api.Entities.User", "User")
+                    b.HasOne("StackOverflowClone.Domain.Entities.User", "User")
                         .WithMany("CommentVotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -630,9 +630,9 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Question", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Question", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.User", "User")
+                    b.HasOne("StackOverflowClone.Domain.Entities.User", "User")
                         .WithMany("Questions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -641,15 +641,15 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.QuestionTag", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.QuestionTag", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.Question", "Question")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StackOverflowClone.Api.Entities.Tag", "Tag")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Tag", "Tag")
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -660,15 +660,15 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.QuestionVote", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.QuestionVote", b =>
                 {
-                    b.HasOne("StackOverflowClone.Api.Entities.Question", "Question")
+                    b.HasOne("StackOverflowClone.Domain.Entities.Question", "Question")
                         .WithMany("QuestionVotes")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("StackOverflowClone.Api.Entities.User", "User")
+                    b.HasOne("StackOverflowClone.Domain.Entities.User", "User")
                         .WithMany("QuestionVotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -679,19 +679,19 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Answer", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Answer", b =>
                 {
                     b.Navigation("AnswerVotes");
 
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Comment", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Comment", b =>
                 {
                     b.Navigation("CommentVotes");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.Question", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.Question", b =>
                 {
                     b.Navigation("Answers");
 
@@ -700,7 +700,7 @@ namespace StackOverflowClone.Api.Migrations
                     b.Navigation("QuestionVotes");
                 });
 
-            modelBuilder.Entity("StackOverflowClone.Api.Entities.User", b =>
+            modelBuilder.Entity("StackOverflowClone.Domain.Entities.User", b =>
                 {
                     b.Navigation("AnswerVotes");
 
