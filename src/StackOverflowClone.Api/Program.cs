@@ -1,8 +1,7 @@
-
-using StackOverflowClone.Api.Entities;
 using StackOverflowClone.Api.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using StackOverflowClone.Api.Data;
 
 namespace StackOverflowClone.Api;
 

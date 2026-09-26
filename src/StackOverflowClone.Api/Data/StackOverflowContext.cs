@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StackOverflowClone.Api.Data;
+using StackOverflowClone.Api.Entities;
 using StackOverflowClone.Api.Data.Seed;
 
-namespace StackOverflowClone.Api.Entities;
+namespace StackOverflowClone.Api.Data;
 
-public class StackOverflowContext : DbContext
+public class StackOverflowContext(DbContextOptions<StackOverflowContext> options) : DbContext(options)
 {
-    public StackOverflowContext(DbContextOptions<StackOverflowContext> options) : base(options)
-    {
-        
-    }
     public DbSet<User> Users { get; set; }
     public DbSet<Question> Questions { get; set; }
     public DbSet<Answer> Answers { get; set; }
