@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StackOverflowClone.Api.Data;
+using StackOverflowClone.Infrastructure.Persistence;
 using StackOverflowClone.Domain.Entities;
 
 #nullable disable
 
-namespace StackOverflowClone.Api.Migrations
+namespace StackOverflowClone.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(StackOverflowContext))]
     [Migration("20260925183058_CleanUpColumnConfiguration")]

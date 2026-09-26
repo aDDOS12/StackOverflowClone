@@ -1,6 +1,6 @@
 ﻿using StackOverflowClone.Domain.Entities;
 
-namespace StackOverflowClone.Api.Data.Seed;
+namespace StackOverflowClone.Infrastructure.Persistence.Seed;
 
 public static class TagSeed
 {

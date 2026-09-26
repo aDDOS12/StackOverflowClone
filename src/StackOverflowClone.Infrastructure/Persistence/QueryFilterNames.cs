@@ -1,4 +1,4 @@
-﻿namespace StackOverflowClone.Api.Data;
+﻿namespace StackOverflowClone.Infrastructure.Persistence;
 
 public static class QueryFilterNames
 {

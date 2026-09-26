@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StackOverflowClone.Domain.Entities;
-using StackOverflowClone.Api.Data.Seed;
+using StackOverflowClone.Infrastructure.Persistence.Seed;
 
-namespace StackOverflowClone.Api.Data;
+namespace StackOverflowClone.Infrastructure.Persistence;
 
 public class StackOverflowContext(DbContextOptions<StackOverflowContext> options) : DbContext(options)
 {

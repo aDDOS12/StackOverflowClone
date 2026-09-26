@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace StackOverflowClone.Api.Migrations
+namespace StackOverflowClone.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class CleanUpColumnConfiguration : Migration

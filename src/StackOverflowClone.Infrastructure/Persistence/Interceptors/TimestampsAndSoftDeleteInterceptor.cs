@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using StackOverflowClone.Domain.Common;
 
-namespace StackOverflowClone.Api.Data.Interceptors;
+namespace StackOverflowClone.Infrastructure.Persistence.Interceptors;
 
 public sealed class TimestampsAndSoftDeleteInterceptor(TimeProvider timeProvider) : SaveChangesInterceptor
 {
