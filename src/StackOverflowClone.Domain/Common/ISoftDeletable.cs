@@ -1,7 +1,6 @@
-﻿namespace StackOverflowClone.Domain.Common
+﻿namespace StackOverflowClone.Domain.Common;
+
+public interface ISoftDeletable
 {
-    public interface ISoftDeletable
-    {
-        DateTime? DeletedAt { get; set; }
-    }
+    DateTime? DeletedAt { get; set; }
 }
