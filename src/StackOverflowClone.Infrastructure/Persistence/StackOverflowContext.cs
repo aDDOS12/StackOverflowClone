@@ -40,11 +40,11 @@ public class StackOverflowContext(DbContextOptions<StackOverflowContext> options
             eb.HasMany(q => q.Tags)
             .WithMany(t => t.Questions)
             .UsingEntity<QuestionTag>(
-                q => q.HasOne(qt => qt.Tag)
+                j => j.HasOne(qt => qt.Tag)
                 .WithMany()
                 .HasForeignKey(qt => qt.TagId),
 
-                q => q.HasOne(qt => qt.Question)
+                j => j.HasOne(qt => qt.Question)
                 .WithMany()
                 .HasForeignKey(qt => qt.QuestionId),
 
@@ -89,7 +89,7 @@ public class StackOverflowContext(DbContextOptions<StackOverflowContext> options
                 "CK_Comments_ExactlyOneParent",
                 "([QuestionId] IS NOT NULL AND [AnswerId] IS NULL) OR ([QuestionId] IS NULL AND [AnswerId] IS NOT NULL)"));
 
-            eb.HasQueryFilter(QueryFilterNames.SoftDelete, q => q.DeletedAt == null);
+            eb.HasQueryFilter(QueryFilterNames.SoftDelete, c => c.DeletedAt == null);
         });
 
         modelBuilder.Entity<User>(eb =>
