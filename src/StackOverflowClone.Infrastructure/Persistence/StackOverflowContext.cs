@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StackOverflowClone.Application.Common;
 using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Domain.Entities;
 using StackOverflowClone.Infrastructure.Persistence.Seed;
