@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using StackOverflowClone.Application;
 using StackOverflowClone.Infrastructure;
 
 namespace StackOverflowClone.Api;
@@ -12,6 +13,8 @@ public class Program
         // Add services to the container.
         builder.Services.AddAuthorization();
         builder.Services.AddOpenApi();
+        builder.Services.AddControllers();
+        builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration);
 
         var app = builder.Build();
@@ -26,6 +29,7 @@ public class Program
         //app.UseHttpsRedirection();
 
         app.UseAuthorization();
+        app.MapControllers();
 
         app.Run();
     }

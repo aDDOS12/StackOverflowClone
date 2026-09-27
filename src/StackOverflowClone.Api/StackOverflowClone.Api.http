@@ -1,6 +1,6 @@
 @StackOverflowClone_HostAddress = http://localhost:5149
 
-GET {{StackOverflowClone_HostAddress}}/weatherforecast/
+GET {{StackOverflowClone_HostAddress}}/api/tags
 Accept: application/json
 
 ###
