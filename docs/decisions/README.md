@@ -7,6 +7,7 @@ Accepted records are not edited. If a decision changes, a new ADR is added and t
 | ADR | Title | Status |
 |---|---|---|
 | [0001](0001-soft-delete.md) | Use soft delete for user content and accounts | Accepted |
+| [0002](0002-clean-architecture.md) | Use Clean Architecture with separate projects | Accepted |
 
 ## Template
 
