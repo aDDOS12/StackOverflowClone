@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Domain.Entities;
 using StackOverflowClone.Infrastructure.Persistence.Seed;
 
 namespace StackOverflowClone.Infrastructure.Persistence;
 
-public class StackOverflowContext(DbContextOptions<StackOverflowContext> options) : DbContext(options)
+public class StackOverflowContext(DbContextOptions<StackOverflowContext> options) : DbContext(options), IApplicationDbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Question> Questions { get; set; }

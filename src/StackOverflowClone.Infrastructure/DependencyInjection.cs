@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Infrastructure.Persistence;
 using StackOverflowClone.Infrastructure.Persistence.Interceptors;
 
@@ -24,6 +25,9 @@ public static class DependencyInjection
             options
             .UseSqlServer(connectionString)
             .AddInterceptors(serviceProvider.GetRequiredService<TimestampsAndSoftDeleteInterceptor>()));
+
+        services.AddScoped<IApplicationDbContext>(provider =>
+            provider.GetRequiredService<StackOverflowContext>());
 
         return services;
     }
