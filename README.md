@@ -17,6 +17,7 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  Domain model and database schema with EF Core migrations
 -  Soft delete and automatic timestamps
 -  API documentation (OpenAPI + Scalar)
+- ✅ Browsing tags (`GET /api/tags`)
 
 **Planned**
 -  Questions, answers and comments
