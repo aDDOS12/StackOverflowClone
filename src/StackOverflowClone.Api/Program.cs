@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using StackOverflowClone.Api.ErrorHandling;
 using StackOverflowClone.Application;
 using StackOverflowClone.Infrastructure;
 
@@ -16,8 +17,11 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration);
+        builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
         var app = builder.Build();
+        app.UseExceptionHandler();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
