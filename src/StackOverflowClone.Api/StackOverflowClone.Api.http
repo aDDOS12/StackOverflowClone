@@ -3,4 +3,12 @@
 GET {{StackOverflowClone_HostAddress}}/api/tags
 Accept: application/json
 
+GET {{StackOverflowClone_HostAddress}}/api/users
+Content-Type: application/json
+{
+  "username": "KowalJan"
+  "email": "jan.kowalski@example.com",
+  "password": "Haslo1234"
+}
+
 ###
