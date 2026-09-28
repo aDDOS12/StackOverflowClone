@@ -17,7 +17,8 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  Domain model and database schema with EF Core migrations
 -  Soft delete and automatic timestamps
 -  API documentation (OpenAPI + Scalar)
-- ✅ Browsing tags (`GET /api/tags`)
+-  Browsing tags (`GET /api/tags`)
+-  User registration (`POST /api/users`)
 
 **Planned**
 -  Questions, answers and comments
@@ -25,7 +26,7 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  Tagging questions and filtering by tag
 -  Accepting answers
 -  Pagination and sorting
--  User registration, login (JWT) and account deletion
+-  login (JWT) and account deletion
 
 ## Tech stack
 
@@ -101,7 +102,7 @@ If the browser warns about the certificate, trust the .NET development certifica
 ## Roadmap
 
 - [x] Phase 0 – Data model fixes, Clean Architecture structure, README
-- [ ] Phase 1 – API foundation: first endpoints, error handling, validation
+- [x] Phase 1 – API foundation: first endpoints, error handling, validation
 - [ ] Phase 2 – Users and security: registration, JWT, authorization, account deletion (GDPR)
 - [ ] Phase 3 – Questions, answers, comments, tags, pagination 
 - [ ] Phase 4 – Business logic: voting, accepting answers
