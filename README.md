@@ -102,8 +102,8 @@ If the browser warns about the certificate, trust the .NET development certifica
 
 - [x] Phase 0 – Data model fixes, Clean Architecture structure, README
 - [ ] Phase 1 – API foundation: first endpoints, error handling, validation
-- [ ] Phase 2 – Questions, answers, comments, tags, pagination
-- [ ] Phase 3 – Users and security: registration, JWT, authorization, account deletion (GDPR)
+- [ ] Phase 2 – Users and security: registration, JWT, authorization, account deletion (GDPR)
+- [ ] Phase 3 – Questions, answers, comments, tags, pagination 
 - [ ] Phase 4 – Business logic: voting, accepting answers
 - [ ] Phase 5 – Unit and integration tests
 - [ ] Phase 6 – Docker and GitHub Actions CI
