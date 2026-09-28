@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Infrastructure.Persistence;
 using StackOverflowClone.Infrastructure.Persistence.Interceptors;
+using StackOverflowClone.Infrastructure.Security;
 
 namespace StackOverflowClone.Infrastructure;
 
@@ -28,6 +29,8 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<StackOverflowContext>());
+
+        services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
 
         return services;
     }
