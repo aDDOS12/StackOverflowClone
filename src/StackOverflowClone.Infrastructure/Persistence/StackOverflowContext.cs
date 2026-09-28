@@ -99,6 +99,8 @@ public class StackOverflowContext(DbContextOptions<StackOverflowContext> options
             eb.Property(u => u.Username).HasMaxLength(30);
             eb.Property(u => u.Email).HasMaxLength(254);
             eb.Property(u => u.PasswordHash).HasMaxLength(256);
+            eb.HasIndex(u => u.Username).IsUnique();
+            eb.HasIndex(u => u.Email).IsUnique();
 
             eb.HasMany(u => u.Questions)
             .WithOne(q => q.User)
