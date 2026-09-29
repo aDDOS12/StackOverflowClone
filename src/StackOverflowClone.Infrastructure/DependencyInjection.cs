@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StackOverflowClone.Application.Common.Interfaces;
+using StackOverflowClone.Infrastructure.Authentication;
 using StackOverflowClone.Infrastructure.Persistence;
 using StackOverflowClone.Infrastructure.Persistence.Interceptors;
 using StackOverflowClone.Infrastructure.Security;
@@ -18,6 +19,11 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("StackOverflowDbConnectionString")
             ?? throw new InvalidOperationException(
                 "Connection string 'StackOverflowDbConnectionString' was not found.");
+
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<TimestampsAndSoftDeleteInterceptor>();
