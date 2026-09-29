@@ -12,3 +12,8 @@ Content-Type: application/json
 }
 
 ###
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJpc3MiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJleHAiOjE3OTA3MTQyOTksImlhdCI6MTc5MDcxMDY5OSwibmJmIjoxNzkwNzEwNjk5LCJzdWIiOiIzZjcwMzg1OS1iYTBmLTRjMzYtNGJjZS0wOGRmMWU1Y2MyZjYiLCJuYW1lIjoiVGVzdEFkbWluIn0.wsnfoidKJwyhqg9VyT5bSMj0u49nATffeNOvuhcAIfI
+
+GET {{StackOverflowClone_HostAddress}}/api/users/me
+Authorization: Bearer {{token}}

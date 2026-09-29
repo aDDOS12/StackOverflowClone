@@ -23,7 +23,7 @@ public sealed class JwtTokenGenerator : ITokenGenerator
         _timeProvider = timeProvider;
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey));
-        _signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        _signingCredentials = new SigningCredentials(_options.CreateSigningKey(), SecurityAlgorithms.HmacSha256);
     }
 
     public AccessToken Generate(User user)

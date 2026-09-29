@@ -42,4 +42,14 @@ public sealed class UserService(IApplicationDbContext context, IValidator<Regist
 
         return new RegisterUserResponse(user.Id, user.Username, user.Email);
     }
+
+    public async Task<CurrentUserResponse> GetCurrentAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await context.Users
+            .Where(u => u.Id == userId && u.DeletedAt == null)
+            .Select(u => new CurrentUserResponse(u.Id, u.Username, u.Email, u.CreatedAt))
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return user ?? throw new NotFoundException("User not found.");
+    }
 }

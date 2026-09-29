@@ -1,7 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Infrastructure.Authentication;
 using StackOverflowClone.Infrastructure.Persistence;
@@ -38,6 +42,27 @@ public static class DependencyInjection
 
         services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
         services.AddSingleton<ITokenGenerator, JwtTokenGenerator>();
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<IOptions<JwtOptions>>((bearerOptions, jwtOptions) =>
+        {
+            var jwt = jwtOptions.Value;
+
+            bearerOptions.MapInboundClaims = false;
+            bearerOptions.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwt.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwt.Audience,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = jwt.CreateSigningKey(),
+                ClockSkew = TimeSpan.FromSeconds(30),
+                NameClaimType = JwtRegisteredClaimNames.Name
+            };
+        });
 
         return services;
     }
