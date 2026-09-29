@@ -6,7 +6,6 @@
 ## About
 
 A REST API inspired by Stack Overflow, built with ASP.NET Core and Entity Framework Core. The goal is to practice production-grade backend development: layered architecture, data integrity, testing and CI.
-
 This project started as a practice exercise in an Entity Framework Core course. It has since been redesigned (Clean Architecture, soft delete, auditing) and extended well beyond the original scope.
 
 *This project is not affiliated with Stack Overflow.*
@@ -19,6 +18,8 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  API documentation (OpenAPI + Scalar)
 -  Browsing tags (`GET /api/tags`)
 -  User registration (`POST /api/users`)
+-  Login with JWT (`POST /api/auth/login`)
+-  Current user profile (`GET /api/users/me`)
 
 **Planned**
 -  Questions, answers and comments
@@ -26,7 +27,7 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  Tagging questions and filtering by tag
 -  Accepting answers
 -  Pagination and sorting
--  login (JWT) and account deletion
+-  Account deletion with personal data anonymization (GDPR)
 
 ## Tech stack
 
@@ -35,6 +36,8 @@ This project started as a practice exercise in an Entity Framework Core course. 
 - Entity Framework Core 10
 - SQL Server (LocalDB for development)
 - OpenAPI (`Microsoft.AspNetCore.OpenApi`) + Scalar
+- FluentValidation
+- JWT bearer authentication
 
 ## Architecture
 
@@ -75,7 +78,17 @@ Detailed reasoning is recorded as Architecture Decision Records in [`docs/decisi
    git clone https://github.com/aDDOS12/StackOverflowClone.git
    cd StackOverflowClone
 ```
-2. Create the database by applying migrations, using one of the options below.
+2. Configure the JWT signing key (stored outside the repository with User Secrets).
+
+Generate a random key (PowerShell):
+```
+   $bytes = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes); [Convert]::ToBase64String($bytes)
+```
+   Then save it:
+```
+   dotnet user-secrets set "Jwt:SigningKey" "<generated-key>" --project src/StackOverflowClone.Api
+```
+3. Create the database by applying migrations, using one of the options below.
 
    **Visual Studio (Package Manager Console)** – set *Default project* to `StackOverflowClone.Infrastructure`, then run:
 ```
@@ -86,11 +99,11 @@ Detailed reasoning is recorded as Architecture Decision Records in [`docs/decisi
    dotnet tool install --global dotnet-ef
    dotnet ef database update --project src/StackOverflowClone.Infrastructure --startup-project src/StackOverflowClone.Api
 ```
-3. Run the API:
+4. Run the API:
 ```
    dotnet run --project src/StackOverflowClone.Api --launch-profile https
 ```
-4. Open the API reference at `https://localhost:7266/scalar/v1`.
+5. Open the API reference at `https://localhost:7266/scalar/v1`.
 
 The connection string is configured in `src/StackOverflowClone.Api/appsettings.Development.json`.
 
