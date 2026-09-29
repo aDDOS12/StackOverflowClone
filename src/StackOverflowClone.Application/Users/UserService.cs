@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using StackOverflowClone.Application.Common;
 using StackOverflowClone.Application.Common.Exceptions;
 using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Domain.Entities;
@@ -17,7 +18,7 @@ public sealed class UserService(IApplicationDbContext context, IValidator<Regist
             throw new ValidationException(validationResult.Errors);
         }
 
-        var email = request.Email.Trim().ToLowerInvariant();
+        var email = EmailNormalizer.Normalize(request.Email);
 
         if (await context.Users.AnyAsync(u => u.Username == request.Username, cancellationToken))
         {
