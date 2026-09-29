@@ -37,6 +37,7 @@ public static class DependencyInjection
             provider.GetRequiredService<StackOverflowContext>());
 
         services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
+        services.AddSingleton<ITokenGenerator, JwtTokenGenerator>();
 
         return services;
     }
