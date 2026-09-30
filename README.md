@@ -20,6 +20,7 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  User registration (`POST /api/users`)
 -  Login with JWT (`POST /api/auth/login`)
 -  Current user profile (`GET /api/users/me`)
+-  Account deletion with personal data anonymization (GDPR) (`POST /api/users/me/delete`)
 
 **Planned**
 -  Questions, answers and comments
@@ -27,7 +28,6 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  Tagging questions and filtering by tag
 -  Accepting answers
 -  Pagination and sorting
--  Account deletion with personal data anonymization (GDPR)
 
 ## Tech stack
 
@@ -116,7 +116,7 @@ If the browser warns about the certificate, trust the .NET development certifica
 
 - [x] Phase 0 – Data model fixes, Clean Architecture structure, README
 - [x] Phase 1 – API foundation: first endpoints, error handling, validation
-- [ ] Phase 2 – Users and security: registration, JWT, authorization, account deletion (GDPR)
+- [x] Phase 2 – Users and security: registration, JWT, authorization, account deletion (GDPR)
 - [ ] Phase 3 – Questions, answers, comments, tags, pagination 
 - [ ] Phase 4 – Business logic: voting, accepting answers
 - [ ] Phase 5 – Unit and integration tests
