@@ -13,7 +13,17 @@ Content-Type: application/json
 
 ###
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJpc3MiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJleHAiOjE3OTA3MTQyOTksImlhdCI6MTc5MDcxMDY5OSwibmJmIjoxNzkwNzEwNjk5LCJzdWIiOiIzZjcwMzg1OS1iYTBmLTRjMzYtNGJjZS0wOGRmMWU1Y2MyZjYiLCJuYW1lIjoiVGVzdEFkbWluIn0.wsnfoidKJwyhqg9VyT5bSMj0u49nATffeNOvuhcAIfI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJpc3MiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJleHAiOjE3OTA3OTAwNTEsImlhdCI6MTc5MDc4NjQ1MSwibmJmIjoxNzkwNzg2NDUxLCJzdWIiOiJjZWI2YTYxMy0wNDY5LTQ1YjYtZjdmMi0wOGRmMWYxMGMzMzkiLCJuYW1lIjoiVG9EZWxldGUifQ.cb1xsIPHhcqaqtykUa2gl_9K3vHqcXecijva3mK8GZc
 
 GET {{StackOverflowClone_HostAddress}}/api/users/me
 Authorization: Bearer {{token}}
+
+###
+
+POST {{StackOverflowClone_HostAddress}}/api/users/me/delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "password": "Haslo1234"
+}

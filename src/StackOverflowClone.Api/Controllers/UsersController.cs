@@ -27,7 +27,7 @@ public sealed class UsersController(IUserService userService) : ControllerBase
     public async Task<ActionResult<CurrentUserResponse>> GetCurrent(CancellationToken cancellationToken)
     {
         var subject = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-        if (!Guid.TryParse(subject, out var userId))
+        if (!TryGetCurrentUserId(out var userId))
         {
             return Unauthorized();
         }
@@ -35,4 +35,24 @@ public sealed class UsersController(IUserService userService) : ControllerBase
         var response = await userService.GetCurrentAsync(userId, cancellationToken);
         return Ok(response);
     }
+
+    [Authorize]
+    [HttpPost("me/delete")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteAccount(DeleteAccountRequest request, CancellationToken cancellationToken)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        await userService.DeleteAccountAsync(userId, request, cancellationToken);
+        return NoContent();
+    }
+
+    private bool TryGetCurrentUserId(out Guid userId) => Guid.TryParse(User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out userId);
 }
