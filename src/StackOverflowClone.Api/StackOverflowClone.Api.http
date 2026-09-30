@@ -39,3 +39,9 @@ Content-Type: application/json
   "content": "I have a list of numbers and wat to keep only the even ones. What is the idiomatic way?",
   "tags": ["linq", "c#"]
 }
+
+###
+
+GET {{StackOverflowClone_HostAddress}}/api/questions/1
+Authorization: Bearer {{token}}
+Content-Type: application/json

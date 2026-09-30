@@ -16,6 +16,15 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
     public async Task<ActionResult<CreateQuestionResponse>> Create(CreateQuestionRequest request, CancellationToken cancellationToken)
     {
         var response = await questionService.CreateAsync(request, cancellationToken);
-        return StatusCode(StatusCodes.Status201Created, response);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
+    }
+
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(QuestionDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<QuestionDetailResponse>> GetById(int id, CancellationToken cancellationToken)
+    {
+        var response = await questionService.GetByIdAsync(id, cancellationToken);
+        return Ok(response);
     }
 }

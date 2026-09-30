@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using StackOverflowClone.Application.Common.Exceptions;
 using StackOverflowClone.Application.Common.Interfaces;
+using StackOverflowClone.Application.Common.Models;
 using StackOverflowClone.Domain.Entities;
 using ValidationException = StackOverflowClone.Application.Common.Exceptions.ValidationException;
 
@@ -59,5 +60,23 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
         await context.SaveChangesAsync(cancellationToken);
 
         return new CreateQuestionResponse(question.Id);
+    }
+
+    public async Task<QuestionDetailResponse> GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var question = await context.Questions
+            .Where(q => q.Id == id)
+            .Select(q => new QuestionDetailResponse(
+                q.Id,
+                q.Title,
+                q.Content,
+                q.Score,
+                q.CreatedAt,
+                q.UpdatedAt,
+                new AuthorDto(q.User.Id, q.User.Username),
+                q.Tags.OrderBy(t => t.TagName).Select(t => t.TagName).ToList()))
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return question ?? throw new NotFoundException($"Question with id {id} was not found.");
     }
 }
