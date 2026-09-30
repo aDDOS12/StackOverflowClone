@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using StackOverflowClone.Application.Auth;
+using StackOverflowClone.Application.Questions;
 using StackOverflowClone.Application.Tags;
 using StackOverflowClone.Application.Users;
 
@@ -14,6 +15,7 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IQuestionService, QuestionService>();
         return services;
     }
 }

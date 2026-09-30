@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ###
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJpc3MiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJleHAiOjE3OTA3OTAwNTEsImlhdCI6MTc5MDc4NjQ1MSwibmJmIjoxNzkwNzg2NDUxLCJzdWIiOiJjZWI2YTYxMy0wNDY5LTQ1YjYtZjdmMi0wOGRmMWYxMGMzMzkiLCJuYW1lIjoiVG9EZWxldGUifQ.cb1xsIPHhcqaqtykUa2gl_9K3vHqcXecijva3mK8GZc
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJpc3MiOiJTdGFja092ZXJmbG93Q2xvbmUiLCJleHAiOjE3OTA3OTk3NDIsImlhdCI6MTc5MDc5NjE0MiwibmJmIjoxNzkwNzk2MTQyLCJzdWIiOiIzZjcwMzg1OS1iYTBmLTRjMzYtNGJjZS0wOGRmMWU1Y2MyZjYiLCJuYW1lIjoiVGVzdEFkbWluIn0.LPdHtv1kQi55NP9sdnW1rY2hLODUFl4_HlEhj00wvKo
 
 GET {{StackOverflowClone_HostAddress}}/api/users/me
 Authorization: Bearer {{token}}
@@ -26,4 +26,16 @@ Content-Type: application/json
 
 {
   "password": "Haslo1234"
+}
+
+###
+
+POST {{StackOverflowClone_HostAddress}}/api/questions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "How to filter a list with LINQ?",
+  "content": "I have a list of numbers and wat to keep only the even ones. What is the idiomatic way?",
+  "tags": ["linq", "c#"]
 }
