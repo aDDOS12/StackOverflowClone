@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
 using StackOverflowClone.Application.Users;
 
 namespace StackOverflowClone.Api.Controllers;
@@ -26,13 +25,7 @@ public sealed class UsersController(IUserService userService) : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CurrentUserResponse>> GetCurrent(CancellationToken cancellationToken)
     {
-        var subject = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-        if (!TryGetCurrentUserId(out var userId))
-        {
-            return Unauthorized();
-        }
-
-        var response = await userService.GetCurrentAsync(userId, cancellationToken);
+        var response = await userService.GetCurrentAsync(cancellationToken);
         return Ok(response);
     }
 
@@ -45,14 +38,7 @@ public sealed class UsersController(IUserService userService) : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAccount(DeleteAccountRequest request, CancellationToken cancellationToken)
     {
-        if (!TryGetCurrentUserId(out var userId))
-        {
-            return Unauthorized();
-        }
-
-        await userService.DeleteAccountAsync(userId, request, cancellationToken);
+        await userService.DeleteAccountAsync(request, cancellationToken);
         return NoContent();
     }
-
-    private bool TryGetCurrentUserId(out Guid userId) => Guid.TryParse(User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out userId);
 }

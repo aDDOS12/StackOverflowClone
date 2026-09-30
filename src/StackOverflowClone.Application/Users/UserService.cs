@@ -9,7 +9,7 @@ using ValidationException = StackOverflowClone.Application.Common.Exceptions.Val
 
 namespace StackOverflowClone.Application.Users;
 
-public sealed class UserService(IApplicationDbContext context, IValidator<RegisterUserRequest> registerValidator, IValidator<DeleteAccountRequest> deleteValidator, IPasswordHasher passwordHasher) : IUserService
+public sealed class UserService(IApplicationDbContext context, IValidator<RegisterUserRequest> registerValidator, IValidator<DeleteAccountRequest> deleteValidator, IPasswordHasher passwordHasher, ICurrentUser currentUser) : IUserService
 {
     public async Task<RegisterUserResponse> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
@@ -44,8 +44,10 @@ public sealed class UserService(IApplicationDbContext context, IValidator<Regist
         return new RegisterUserResponse(user.Id, user.Username, user.Email);
     }
 
-    public async Task<CurrentUserResponse> GetCurrentAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<CurrentUserResponse> GetCurrentAsync(CancellationToken cancellationToken)
     {
+        var userId = currentUser.UserId ?? throw new UnauthorizedException("User is not authenticated.");
+
         var user = await context.Users
             .Where(u => u.Id == userId && u.DeletedAt == null)
             .Select(u => new CurrentUserResponse(u.Id, u.Username, u.Email, u.CreatedAt))
@@ -54,8 +56,10 @@ public sealed class UserService(IApplicationDbContext context, IValidator<Regist
         return user ?? throw new NotFoundException("User not found.");
     }
 
-    public async Task DeleteAccountAsync(Guid userId, DeleteAccountRequest request, CancellationToken cancellationToken)
+    public async Task DeleteAccountAsync(DeleteAccountRequest request, CancellationToken cancellationToken)
     {
+        var userId = currentUser.UserId ?? throw new UnauthorizedException("User is not authenticated.");
+
         var validationResult = await deleteValidator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {

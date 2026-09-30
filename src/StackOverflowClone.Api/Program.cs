@@ -1,6 +1,8 @@
 using Scalar.AspNetCore;
 using StackOverflowClone.Api.ErrorHandling;
+using StackOverflowClone.Api.Services;
 using StackOverflowClone.Application;
+using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Infrastructure;
 
 namespace StackOverflowClone.Api;
@@ -21,6 +23,8 @@ public class Program
         builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
         builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
         var app = builder.Build();
         app.UseExceptionHandler();
