@@ -37,7 +37,7 @@ This project started as a practice exercise in an Entity Framework Core course. 
 - SQL Server (LocalDB for development)
 - OpenAPI (`Microsoft.AspNetCore.OpenApi`) + Scalar
 - FluentValidation
-- JWT bearer authenticationgit ls 
+- JWT bearer authentication 
 
 ## Architecture
 
