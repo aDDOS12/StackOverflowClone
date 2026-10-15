@@ -39,4 +39,20 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
         var response = await questionService.GetAsync(request, cancellationToken);
         return Ok(response);
     }
+
+    [Authorize]
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        int id,
+        UpdateQuestionRequest request,
+        CancellationToken cancellationToken)
+    {
+        await questionService.UpdateAsync(id, request, cancellationToken);
+        return NoContent();
+    }
 }

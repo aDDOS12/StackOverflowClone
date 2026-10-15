@@ -9,18 +9,11 @@ using ValidationException = StackOverflowClone.Application.Common.Exceptions.Val
 
 namespace StackOverflowClone.Application.Questions;
 
-public sealed class QuestionService(IApplicationDbContext context, IValidator<CreateQuestionRequest> createValidator, IValidator<GetQuestionRequest> getValidator, ICurrentUser currentUser) : IQuestionService
+public sealed class QuestionService(IApplicationDbContext context, IValidator<CreateQuestionRequest> createValidator, IValidator<GetQuestionRequest> getValidator, IValidator<UpdateQuestionRequest> updateValidator, ICurrentUser currentUser) : IQuestionService
 {
     public async Task<CreateQuestionResponse> CreateAsync(CreateQuestionRequest request, CancellationToken cancellationToken)
     {
-        var userId = currentUser.UserId ?? throw new UnauthorizedException("User is not authenticated");
-
-        var authorExists = await context.Users.AnyAsync(u => u.Id == userId && u.DeletedAt == null, cancellationToken);
-
-        if (!authorExists)
-        {
-            throw new UnauthorizedException("User account no longer exists.");
-        }
+        var userId = await GetActiveUserIdAsync(cancellationToken);
 
         var validationResult = await createValidator.ValidateAsync(request, cancellationToken);
 
@@ -29,24 +22,7 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
             throw new ValidationException(validationResult.Errors);
         }
 
-        var tagNames = request.Tags
-            .Select(t => t.Trim().ToLowerInvariant())
-            .Distinct()
-            .ToList();
-
-        var tags = await context.Tags
-            .Where(t => tagNames.Contains(t.TagName))
-            .ToListAsync(cancellationToken);
-
-        var unknownTags = tagNames.Except(tags.Select(t => t.TagName)).ToList();
-
-        if (unknownTags.Count > 0)
-        {
-            throw new ValidationException(
-                [
-                    new ValidationFailure(nameof(request.Tags), $"Unknown tags: {string.Join(", ", unknownTags)}.")
-                ]);
-        }
+        var tags = await ResolveTagsAsync(request.Tags, cancellationToken);
 
         var question = new Question
         {
@@ -118,5 +94,67 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
             .ToListAsync(cancellationToken);
 
         return new PagedResponse<QuestionSummaryResponse>(items, request.Page, request.PageSize, totalCount);
+    }
+
+    private async Task<Guid> GetActiveUserIdAsync(CancellationToken cancellationToken)
+    {
+        var userId = currentUser.UserId ?? throw new UnauthorizedException("User is not authenticated");
+
+        var userExists = await context.Users.AnyAsync(u => u.Id == userId && u.DeletedAt == null, cancellationToken);
+
+        return userExists ? userId : throw new UnauthorizedException("User account no longer exists.");
+    }
+
+    private async Task<List<Tag>> ResolveTagsAsync(IEnumerable<string> requestedTags, CancellationToken cancellationToken)
+    {
+        var tagNames = requestedTags
+            .Select(t => t.Trim().ToLowerInvariant())
+            .Distinct()
+            .ToList();
+
+        var tags = await context.Tags
+            .Where(t => tagNames.Contains(t.TagName))
+            .ToListAsync(cancellationToken);
+
+        var unknownTags = tagNames.Except(tags.Select(t => t.TagName)).ToList();
+        if (unknownTags.Count > 0)
+        {
+            throw new ValidationException(
+                [
+                    new ValidationFailure(nameof(CreateQuestionRequest.Tags), $"Unknown tags: {string.Join(", ", unknownTags)}.")
+                ]);
+        }
+
+        return tags;
+    }
+
+    public async Task UpdateAsync(int id, UpdateQuestionRequest request, CancellationToken cancellationToken)
+    {
+        var userId = await GetActiveUserIdAsync(cancellationToken);
+
+        var validationResult = await updateValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var question = await context.Questions
+            .Include(q => q.Tags)
+            .SingleOrDefaultAsync(q => q.Id == id, cancellationToken)
+            ?? throw new NotFoundException($"Question with id {id} was not found.");
+
+        if (question.UserId != userId)
+        {
+            throw new ForbiddenException("Only the author can edit this question.");
+        }
+
+        var tags = await ResolveTagsAsync(request.Tags, cancellationToken);
+
+        question.Title = request.Title;
+        question.Content = request.Content;
+        question.Tags.Clear();
+        question.Tags.AddRange(tags);
+
+        await context.SaveChangesAsync(cancellationToken);
     }
 }
