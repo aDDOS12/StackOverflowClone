@@ -55,4 +55,16 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
         await questionService.UpdateAsync(id, request, cancellationToken);
         return NoContent();
     }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await questionService.DeleteAsync(id, cancellationToken);
+        return NoContent();
+    }
 }

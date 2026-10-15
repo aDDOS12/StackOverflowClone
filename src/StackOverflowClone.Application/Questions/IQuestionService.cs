@@ -8,4 +8,5 @@ public interface IQuestionService
     Task<QuestionDetailResponse> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<PagedResponse<QuestionSummaryResponse>> GetAsync(GetQuestionRequest request, CancellationToken cancellationToken);
     Task UpdateAsync(int id, UpdateQuestionRequest request, CancellationToken cancellationToken);
+    Task DeleteAsync(int id, CancellationToken cancellationToken);
 }

@@ -157,4 +157,20 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
 
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken)
+    {
+        var userId = await GetActiveUserIdAsync(cancellationToken);
+
+        var question = await context.Questions.SingleOrDefaultAsync(q => q.Id == id, cancellationToken)
+            ?? throw new NotFoundException($"Question with id {id} was not found");
+
+        if (question.UserId != userId)
+        {
+            throw new ForbiddenException("Only the author can delete this question");
+        }
+
+        context.Questions.Remove(question);
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }
