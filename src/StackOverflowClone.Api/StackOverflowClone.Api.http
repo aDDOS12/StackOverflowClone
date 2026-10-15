@@ -45,3 +45,33 @@ Content-Type: application/json
 GET {{StackOverflowClone_HostAddress}}/api/questions/1
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
+### Cała lista
+GET {{StackOverflowClone_HostAddress}}/api/questions
+
+### Strona 1, po 2 pytania
+GET {{StackOverflowClone_HostAddress}}/api/questions?pageSize=2
+
+### Strona 2, po 2 pytania
+GET {{StackOverflowClone_HostAddress}}/api/questions?pageSize=2&page=2
+
+### Filtr: c#
+GET {{StackOverflowClone_HostAddress}}/api/questions?tag=c%23
+
+### Filtr: docker
+GET {{StackOverflowClone_HostAddress}}/api/questions?tag=docker
+
+### Filtr: nieistniejący tag
+GET {{StackOverflowClone_HostAddress}}/api/questions?tag=nieistniejacy
+
+### Błąd: page=0
+GET {{StackOverflowClone_HostAddress}}/api/questions?page=0
+
+### Błąd: pageSize=100
+GET {{StackOverflowClone_HostAddress}}/api/questions?pageSize=100
+
+### Błąd: sort=7
+GET {{StackOverflowClone_HostAddress}}/api/questions?sort=7
+
+### Błąd: sort=abc
+GET {{StackOverflowClone_HostAddress}}/api/questions?sort=abc

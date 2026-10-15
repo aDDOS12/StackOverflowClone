@@ -9,7 +9,7 @@ using ValidationException = StackOverflowClone.Application.Common.Exceptions.Val
 
 namespace StackOverflowClone.Application.Questions;
 
-public sealed class QuestionService(IApplicationDbContext context, IValidator<CreateQuestionRequest> createValidator, ICurrentUser currentUser) : IQuestionService
+public sealed class QuestionService(IApplicationDbContext context, IValidator<CreateQuestionRequest> createValidator, IValidator<GetQuestionRequest> getValidator, ICurrentUser currentUser) : IQuestionService
 {
     public async Task<CreateQuestionResponse> CreateAsync(CreateQuestionRequest request, CancellationToken cancellationToken)
     {
@@ -78,5 +78,45 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
             .SingleOrDefaultAsync(cancellationToken);
 
         return question ?? throw new NotFoundException($"Question with id {id} was not found.");
+    }
+
+    public async Task<PagedResponse<QuestionSummaryResponse>> GetAsync(GetQuestionRequest request, CancellationToken cancellationToken)
+    {
+        var validationResult = await getValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        IQueryable<Question> query = context.Questions;
+
+        if (!string.IsNullOrWhiteSpace(request.Tag))
+        {
+            var tagName = request.Tag.Trim().ToLowerInvariant();
+            query = query.Where(q => q.Tags.Any(t => t.TagName == tagName));
+        }
+
+        query = request.Sort switch
+        {
+            QuestionSort.Score => query.OrderByDescending(q => q.Score).ThenByDescending(q => q.Id),
+            _ => query.OrderByDescending(q => q.CreatedAt).ThenByDescending(q => q.Id)
+        };
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(q => new QuestionSummaryResponse(
+                q.Id,
+                q.Title,
+                q.Score,
+                q.CreatedAt,
+                new AuthorDto(q.User.Id, q.User.Username),
+                q.Tags.OrderBy(t => t.TagName).Select(t => t.TagName).ToList(),
+                q.Answers.Count))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResponse<QuestionSummaryResponse>(items, request.Page, request.PageSize, totalCount);
     }
 }

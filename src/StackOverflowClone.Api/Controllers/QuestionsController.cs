@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StackOverflowClone.Application.Common.Models;
 using StackOverflowClone.Application.Questions;
 
 namespace StackOverflowClone.Api.Controllers;
@@ -25,6 +26,17 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
     public async Task<ActionResult<QuestionDetailResponse>> GetById(int id, CancellationToken cancellationToken)
     {
         var response = await questionService.GetByIdAsync(id, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResponse<QuestionSummaryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResponse<QuestionSummaryResponse>>> Get(
+        [FromQuery] GetQuestionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response = await questionService.GetAsync(request, cancellationToken);
         return Ok(response);
     }
 }
