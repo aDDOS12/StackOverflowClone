@@ -1,5 +1,6 @@
 using Scalar.AspNetCore;
 using StackOverflowClone.Api.ErrorHandling;
+using StackOverflowClone.Api.OpenApi;
 using StackOverflowClone.Api.Services;
 using StackOverflowClone.Application;
 using StackOverflowClone.Application.Common.Interfaces;
@@ -15,7 +16,12 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddAuthorization();
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+            options.AddOperationTransformer<BearerSecurityRequirementTransformer>();
+        });
+
         builder.Services.AddControllers();
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration);
