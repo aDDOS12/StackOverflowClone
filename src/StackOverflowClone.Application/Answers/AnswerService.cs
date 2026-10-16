@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using StackOverflowClone.Application.Common;
 using StackOverflowClone.Application.Common.Exceptions;
 using StackOverflowClone.Application.Common.Interfaces;
+using StackOverflowClone.Application.Common.Models;
 using StackOverflowClone.Domain.Entities;
 using ValidationException = StackOverflowClone.Application.Common.Exceptions.ValidationException;
 
 namespace StackOverflowClone.Application.Answers;
 
-public sealed class AnswerService(IApplicationDbContext context, IValidator<CreateAnswerRequest> createValidator, ICurrentUser currentUser) : IAnswerService
+public sealed class AnswerService(IApplicationDbContext context, IValidator<CreateAnswerRequest> createValidator, IValidator<GetAnswersRequest> getValidator, ICurrentUser currentUser) : IAnswerService
 {
     public async Task<CreateAnswerResponse> CreateAsync(int questionId, CreateAnswerRequest request, CancellationToken cancellationToken)
     {
@@ -23,7 +24,7 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
         var questionExists = await context.Questions.AnyAsync(q => q.Id == questionId, cancellationToken);
         if (!questionExists)
         {
-            throw new NotFoundException($"Question with id {questionId} was not found.");
+            await EnsureQuestionExistsAsync(questionId, cancellationToken);
         }
 
         var answer = new Answer
@@ -37,5 +38,52 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
         await context.SaveChangesAsync(cancellationToken);
 
         return new CreateAnswerResponse(answer.Id);
+    }
+
+    private async Task EnsureQuestionExistsAsync(int questionId, CancellationToken cancellationToken)
+    {
+        var questionExits = await context.Questions.AnyAsync(q => q.Id == questionId, cancellationToken);
+
+        if (!questionExits)
+        {
+            throw new NotFoundException($"Question with id {questionId} was not found.");
+        }
+    }
+
+    public async Task<PagedResponse<AnswerResponse>> GetByQuestionAsync(int questionId, GetAnswersRequest request, CancellationToken cancellationToken)
+    {
+        var validationReult = await getValidator.ValidateAsync(request, cancellationToken);
+        if (!validationReult.IsValid)
+        {
+            throw new ValidationException(validationReult.Errors);
+        }
+
+        await EnsureQuestionExistsAsync(questionId, cancellationToken);
+
+        var query = context.Answers.Where(a => a.QuestionId == questionId);
+
+        query = request.Sort switch
+        {
+            AnswerSort.Newest => query.OrderByDescending(a => a.CreatedAt).ThenByDescending(a => a.Id),
+            AnswerSort.Oldest => query.OrderBy(a => a.CreatedAt).ThenBy(a => a.Id),
+            _ => query.OrderByDescending(a => a.Score).ThenBy(a => a.CreatedAt).ThenBy(a => a.Id)
+        };
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(a => new AnswerResponse(
+                a.Id,
+                a.Content,
+                a.Score,
+                a.IsAccepted,
+                a.CreatedAt,
+                a.UpdatedAt,
+                new AuthorDto(a.User.Id, a.User.Username)))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResponse<AnswerResponse>(items, request.Page, request.PageSize, totalCount);
     }
 }

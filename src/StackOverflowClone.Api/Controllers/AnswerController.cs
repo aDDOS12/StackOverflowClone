@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowClone.Application.Answers;
+using StackOverflowClone.Application.Common.Models;
 
 namespace StackOverflowClone.Api.Controllers;
 
@@ -21,5 +22,18 @@ public sealed class AnswerController(IAnswerService answerService) : ControllerB
     {
         var response = await answerService.CreateAsync(questionId, request, cancellationToken);
         return StatusCode(StatusCodes.Status201Created, response);
+    }
+
+    [Authorize]
+    [ProducesResponseType(typeof(PagedResponse<AnswerResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PagedResponse<AnswerResponse>>> GetByQuestion(
+        int questionId,
+        [FromQuery] GetAnswersRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response = await answerService.GetByQuestionAsync(questionId, request, cancellationToken);
+        return Ok(response);
     }
 }
