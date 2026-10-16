@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
+using StackOverflowClone.Application.Common;
 using StackOverflowClone.Application.Common.Exceptions;
 using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Application.Common.Models;
@@ -13,7 +14,7 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
 {
     public async Task<CreateQuestionResponse> CreateAsync(CreateQuestionRequest request, CancellationToken cancellationToken)
     {
-        var userId = await GetActiveUserIdAsync(cancellationToken);
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
 
         var validationResult = await createValidator.ValidateAsync(request, cancellationToken);
 
@@ -96,15 +97,6 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
         return new PagedResponse<QuestionSummaryResponse>(items, request.Page, request.PageSize, totalCount);
     }
 
-    private async Task<Guid> GetActiveUserIdAsync(CancellationToken cancellationToken)
-    {
-        var userId = currentUser.UserId ?? throw new UnauthorizedException("User is not authenticated");
-
-        var userExists = await context.Users.AnyAsync(u => u.Id == userId && u.DeletedAt == null, cancellationToken);
-
-        return userExists ? userId : throw new UnauthorizedException("User account no longer exists.");
-    }
-
     private async Task<List<Tag>> ResolveTagsAsync(IEnumerable<string> requestedTags, CancellationToken cancellationToken)
     {
         var tagNames = requestedTags
@@ -130,7 +122,7 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
 
     public async Task UpdateAsync(int id, UpdateQuestionRequest request, CancellationToken cancellationToken)
     {
-        var userId = await GetActiveUserIdAsync(cancellationToken);
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
 
         var validationResult = await updateValidator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
@@ -160,7 +152,7 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var userId = await GetActiveUserIdAsync(cancellationToken);
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
 
         var question = await context.Questions.SingleOrDefaultAsync(q => q.Id == id, cancellationToken)
             ?? throw new NotFoundException($"Question with id {id} was not found");
