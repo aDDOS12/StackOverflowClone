@@ -9,7 +9,7 @@ using ValidationException = StackOverflowClone.Application.Common.Exceptions.Val
 
 namespace StackOverflowClone.Application.Answers;
 
-public sealed class AnswerService(IApplicationDbContext context, IValidator<CreateAnswerRequest> createValidator, IValidator<GetAnswersRequest> getValidator, ICurrentUser currentUser) : IAnswerService
+public sealed class AnswerService(IApplicationDbContext context, IValidator<CreateAnswerRequest> createValidator, IValidator<GetAnswersRequest> getValidator, IValidator<UpdateAnswerRequest> updateValidator, ICurrentUser currentUser) : IAnswerService
 {
     public async Task<CreateAnswerResponse> CreateAsync(int questionId, CreateAnswerRequest request, CancellationToken cancellationToken)
     {
@@ -85,5 +85,46 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
             .ToListAsync(cancellationToken);
 
         return new PagedResponse<AnswerResponse>(items, request.Page, request.PageSize, totalCount);
+    }
+
+    public async Task UpdateAsync(int questionId, int answerId, UpdateAnswerRequest request, CancellationToken cancellationToken)
+    {
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
+
+        var validationResult = await updateValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var answer = await GetOwnedAnswerAsync(questionId, answerId, userId, cancellationToken);
+
+        answer.Content = request.Content;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(int questionId, int answerId, CancellationToken cancellationToken)
+    {
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
+
+        var answer = await GetOwnedAnswerAsync(questionId, answerId, userId, cancellationToken);
+
+        context.Answers.Remove(answer);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task<Answer> GetOwnedAnswerAsync(int questionId, int answerId, Guid userId, CancellationToken cancellationToken)
+    {
+        await EnsureQuestionExistsAsync(questionId, cancellationToken);
+
+        var answer = await context.Answers.SingleOrDefaultAsync(a => a.Id == answerId && a.QuestionId == questionId, cancellationToken)
+            ?? throw new NotFoundException($"Answer with id {answerId} was not found.");
+
+        if (answer.UserId != userId)
+        {
+            throw new ForbiddenException("Only the author can modify this answer.");
+        }
+
+        return answer;
     }
 }

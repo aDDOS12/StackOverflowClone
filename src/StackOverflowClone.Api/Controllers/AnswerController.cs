@@ -36,4 +36,36 @@ public sealed class AnswerController(IAnswerService answerService) : ControllerB
         var response = await answerService.GetByQuestionAsync(questionId, request, cancellationToken);
         return Ok(response);
     }
+
+    [Authorize]
+    [HttpPut("{answerId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        int questionId,
+        int answerId,
+        UpdateAnswerRequest request,
+        CancellationToken cancellationToken)
+    {
+        await answerService.UpdateAsync(questionId, answerId, request, cancellationToken);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpDelete("{answerId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(
+        int questionId,
+        int answerId,
+        CancellationToken cancellationToken)
+    {
+        await answerService.DeleteAsync(questionId, answerId, cancellationToken);
+        return NoContent();
+    }
 }
