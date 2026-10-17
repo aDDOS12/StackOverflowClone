@@ -60,4 +60,16 @@ public sealed class CommentsController(ICommentService commentService) : Control
         var response = await commentService.GetForAnswerAsync(questionId, answerId, cancellationToken);
         return Ok(response);
     }
+
+    [Authorize]
+    [HttpDelete("api/comments/{commentId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int commentId, CancellationToken cancellationToken)
+    {
+        await commentService.DeleteAsync(commentId, cancellationToken);
+        return NoContent();
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using StackOverflowClone.Application.Common;
+using StackOverflowClone.Application.Common.Exceptions;
 using StackOverflowClone.Application.Common.Interfaces;
 using StackOverflowClone.Application.Common.Models;
 using StackOverflowClone.Domain.Entities;
@@ -81,4 +82,20 @@ public sealed class CommentService(IApplicationDbContext context, IValidator<Cre
             c.CreatedAt,
             new AuthorDto(c.User.Id, c.User.Username)))
         .ToListAsync(cancellationToken);
+
+    public async Task DeleteAsync(int commentId, CancellationToken cancellationToken)
+    {
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
+
+        var comment = await context.Comments.SingleOrDefaultAsync(c => c.Id == commentId, cancellationToken)
+            ?? throw new NotFoundException($"Comment with id {commentId} was not found.");
+
+        if (comment.UserId != userId)
+        {
+            throw new ForbiddenException("Only the author can delete this comment.");
+        }
+
+        context.Comments.Remove(comment);
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }
