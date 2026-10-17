@@ -24,7 +24,7 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
         var questionExists = await context.Questions.AnyAsync(q => q.Id == questionId, cancellationToken);
         if (!questionExists)
         {
-            await EnsureQuestionExistsAsync(questionId, cancellationToken);
+            await context.EnsureQuestionExistsAsync(questionId, cancellationToken);
         }
 
         var answer = new Answer
@@ -40,16 +40,6 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
         return new CreateAnswerResponse(answer.Id);
     }
 
-    private async Task EnsureQuestionExistsAsync(int questionId, CancellationToken cancellationToken)
-    {
-        var questionExits = await context.Questions.AnyAsync(q => q.Id == questionId, cancellationToken);
-
-        if (!questionExits)
-        {
-            throw new NotFoundException($"Question with id {questionId} was not found.");
-        }
-    }
-
     public async Task<PagedResponse<AnswerResponse>> GetByQuestionAsync(int questionId, GetAnswersRequest request, CancellationToken cancellationToken)
     {
         var validationReult = await getValidator.ValidateAsync(request, cancellationToken);
@@ -58,7 +48,7 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
             throw new ValidationException(validationReult.Errors);
         }
 
-        await EnsureQuestionExistsAsync(questionId, cancellationToken);
+        await context.EnsureQuestionExistsAsync(questionId, cancellationToken);
 
         var query = context.Answers.Where(a => a.QuestionId == questionId);
 
@@ -115,7 +105,7 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
 
     private async Task<Answer> GetOwnedAnswerAsync(int questionId, int answerId, Guid userId, CancellationToken cancellationToken)
     {
-        await EnsureQuestionExistsAsync(questionId, cancellationToken);
+        await context.EnsureQuestionExistsAsync(questionId, cancellationToken);
 
         var answer = await context.Answers.SingleOrDefaultAsync(a => a.Id == answerId && a.QuestionId == questionId, cancellationToken)
             ?? throw new NotFoundException($"Answer with id {answerId} was not found.");

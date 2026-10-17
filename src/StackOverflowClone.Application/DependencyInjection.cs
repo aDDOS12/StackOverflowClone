@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using StackOverflowClone.Application.Answers;
 using StackOverflowClone.Application.Auth;
+using StackOverflowClone.Application.Comments;
 using StackOverflowClone.Application.Questions;
 using StackOverflowClone.Application.Tags;
 using StackOverflowClone.Application.Users;
@@ -18,6 +19,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
+        services.AddScoped<ICommentService, CommentService>();
         return services;
     }
 }
