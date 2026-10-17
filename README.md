@@ -16,18 +16,24 @@ This project started as a practice exercise in an Entity Framework Core course. 
 -  Domain model and database schema with EF Core migrations
 -  Soft delete and automatic timestamps
 -  API documentation (OpenAPI + Scalar)
--  Browsing tags (`GET /api/tags`)
+
+**Users**
 -  User registration (`POST /api/users`)
 -  Login with JWT (`POST /api/auth/login`)
 -  Current user profile (`GET /api/users/me`)
 -  Account deletion with personal data anonymization (GDPR) (`POST /api/users/me/delete`)
 
+**Content**
+- Questions: create, get, edit and delete (authors only)
+- Browsing tags (`GET /api/tags`)
+- Question list with pagination, sorting (newest, score) and tag filtering
+- Answers: create, paginated list, edit and delete (authors only)
+- Comments on questions and answers
+
 **Planned**
--  Questions, answers and comments
 -  Upvotes and downvotes
--  Tagging questions and filtering by tag
 -  Accepting answers
--  Pagination and sorting
+- Deletion rules for questions with valuable answers
 
 ## Tech stack
 
@@ -61,6 +67,7 @@ Api ──► Application ──► Domain
 - **Auditing via interceptor** – a `SaveChangesInterceptor` sets `CreatedAt`, `UpdatedAt` and `DeletedAt` in one place, using `TimeProvider` for testability.
 - **Comment integrity** – a check constraint guarantees that a comment belongs to exactly one parent: a question or an answer.
 - **No lazy loading** – related data is loaded explicitly to avoid N+1 queries.
+- **Resource-level authorization** – `[Authorize]` only checks that a user is logged in; services check that the user is the author of the specific resource and return `403 Forbidden` otherwise.
 
 Detailed reasoning is recorded as Architecture Decision Records in [`docs/decisions`](docs/decisions).
 
@@ -117,7 +124,7 @@ If the browser warns about the certificate, trust the .NET development certifica
 - [x] Phase 0 – Data model fixes, Clean Architecture structure, README
 - [x] Phase 1 – API foundation: first endpoints, error handling, validation
 - [x] Phase 2 – Users and security: registration, JWT, authorization, account deletion (GDPR)
-- [ ] Phase 3 – Questions, answers, comments, tags, pagination 
+- [x] Phase 3 – Questions, answers, comments, tags, pagination 
 - [ ] Phase 4 – Business logic: voting, accepting answers
 - [ ] Phase 5 – Unit and integration tests
 - [ ] Phase 6 – Docker and GitHub Actions CI
