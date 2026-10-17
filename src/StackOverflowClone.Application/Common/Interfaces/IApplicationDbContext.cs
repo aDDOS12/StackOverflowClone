@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using StackOverflowClone.Domain.Entities;
 
 namespace StackOverflowClone.Application.Common.Interfaces;
@@ -13,6 +14,7 @@ public interface IApplicationDbContext
     DbSet<QuestionVote> QuestionVotes { get; }
     DbSet<AnswerVote> AnswerVotes { get; }
     DbSet<CommentVote> CommentVotes { get; }
+    DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

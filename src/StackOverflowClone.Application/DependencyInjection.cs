@@ -6,6 +6,7 @@ using StackOverflowClone.Application.Comments;
 using StackOverflowClone.Application.Questions;
 using StackOverflowClone.Application.Tags;
 using StackOverflowClone.Application.Users;
+using StackOverflowClone.Application.Votes;
 
 namespace StackOverflowClone.Application;
 
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IVoteService, VoteService>();
         return services;
     }
 }
