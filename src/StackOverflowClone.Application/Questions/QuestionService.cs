@@ -162,6 +162,16 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
             throw new ForbiddenException("Only the author can delete this question");
         }
 
+        var hasValuableAnswers = await context.Answers
+            .AnyAsync(a => a.QuestionId == id && (a.IsAccepted || a.Score > 0), cancellationToken);
+
+        if (hasValuableAnswers)
+        {
+            throw new ConflictException(
+                "Questions with accepted or upvoted answers cannot be deleted.",
+                ErrorCodes.QuestionHasValuableAnswers);
+        }
+
         context.Questions.Remove(question);
         await context.SaveChangesAsync(cancellationToken);
     }

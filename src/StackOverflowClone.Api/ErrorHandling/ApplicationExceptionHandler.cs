@@ -26,17 +26,25 @@ public sealed class ApplicationExceptionHandler(IProblemDetailsService problemDe
         }
 
         var (statusCode, title) = mapping.Value;
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = statusCode,
+            Title = title,
+            Detail = exception.Message
+        };
+
+        if (exception is ConflictException { ErrorCode: { } errorCode })
+        {
+            problemDetails.Extensions["code"] = errorCode;
+        }
+
         httpContext.Response.StatusCode = statusCode;
 
         return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
-            ProblemDetails = new ProblemDetails
-            {
-                Status = statusCode,
-                Title = title,
-                Detail = exception.Message
-            }
+            ProblemDetails = problemDetails
         });
     }
 }

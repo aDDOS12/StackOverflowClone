@@ -23,12 +23,12 @@ public sealed class UserService(IApplicationDbContext context, IValidator<Regist
 
         if (await context.Users.AnyAsync(u => u.Username == request.Username, cancellationToken))
         {
-            throw new ConflictException($"Username '{request.Username}' is already taken.");
+            throw new ConflictException($"Username '{request.Username}' is already taken.", ErrorCodes.UsernameTaken);
         }
 
         if (await context.Users.AnyAsync(u => u.Email == email, cancellationToken))
         {
-            throw new ConflictException("There's already registered account on this email.");
+            throw new ConflictException("There's already registered account on this email.", ErrorCodes.EmailTaken);
         }
 
         var user = new User

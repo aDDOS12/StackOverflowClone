@@ -99,6 +99,11 @@ public sealed class AnswerService(IApplicationDbContext context, IValidator<Crea
 
         var answer = await GetOwnedAnswerAsync(questionId, answerId, userId, cancellationToken);
 
+        if (answer.IsAccepted)
+        {
+            throw new ConflictException("Accepted answers cannot be deleted.", ErrorCodes.AcceptedAnswerCannotBeDeleted);
+        }
+
         context.Answers.Remove(answer);
         await context.SaveChangesAsync(cancellationToken);
     }
