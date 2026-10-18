@@ -76,6 +76,12 @@ public class StackOverflowContext(DbContextOptions<StackOverflowContext> options
             .OnDelete(DeleteBehavior.Restrict);
 
             eb.HasQueryFilter(QueryFilterNames.SoftDelete, a => a.DeletedAt == null);
+
+            eb.HasIndex(a => a.QuestionId, "IX_Answers_QuestionId");
+
+            eb.HasIndex(a => a.QuestionId, "IX_Answers_QuestionId_AcceptedUnique")
+            .IsUnique()
+            .HasFilter("[IsAccepted] = 1 AND [DeletedAt] IS NULL");
         });
 
         modelBuilder.Entity<Comment>(eb =>

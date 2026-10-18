@@ -58,9 +58,13 @@ namespace StackOverflowClone.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "QuestionId" }, "IX_Answers_QuestionId");
+
+                    b.HasIndex(new[] { "QuestionId" }, "IX_Answers_QuestionId_AcceptedUnique")
+                        .IsUnique()
+                        .HasFilter("[IsAccepted] = 1 AND [DeletedAt] IS NULL");
 
                     b.ToTable("Answers");
                 });
