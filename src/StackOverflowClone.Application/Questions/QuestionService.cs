@@ -10,7 +10,7 @@ using ValidationException = StackOverflowClone.Application.Common.Exceptions.Val
 
 namespace StackOverflowClone.Application.Questions;
 
-public sealed class QuestionService(IApplicationDbContext context, IValidator<CreateQuestionRequest> createValidator, IValidator<GetQuestionRequest> getValidator, IValidator<UpdateQuestionRequest> updateValidator, ICurrentUser currentUser) : IQuestionService
+public sealed class QuestionService(IApplicationDbContext context, IValidator<CreateQuestionRequest> createValidator, IValidator<GetQuestionRequest> getValidator, IValidator<UpdateQuestionRequest> updateValidator, IValidator<AcceptAnswerRequest> acceptValidator, ICurrentUser currentUser) : IQuestionService
 {
     public async Task<CreateQuestionResponse> CreateAsync(CreateQuestionRequest request, CancellationToken cancellationToken)
     {
@@ -164,5 +164,66 @@ public sealed class QuestionService(IApplicationDbContext context, IValidator<Cr
 
         context.Questions.Remove(question);
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task AcceptAnswerAsync(int questionId, AcceptAnswerRequest request, CancellationToken cancellationToken)
+    {
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
+
+        var validationResult = await acceptValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        await EnsureQuestionAuthorAsync(questionId, userId, cancellationToken);
+
+        var isAlreadyAccepted = await context.Answers
+        .Where(a => a.Id == request.AnswerId && a.QuestionId == questionId)
+        .Select(a => (bool?)a.IsAccepted)
+        .SingleOrDefaultAsync(cancellationToken)
+        ?? throw new NotFoundException($"Answer with id {request.AnswerId} was not found.");
+
+        if (isAlreadyAccepted)
+        {
+            return;
+        }
+
+        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+
+        await context.Answers
+            .Where(a => a.QuestionId == questionId && a.IsAccepted)
+            .ExecuteUpdateAsync(s => s.SetProperty(a => a.IsAccepted, false), cancellationToken);
+
+        await context.Answers
+            .Where(a => a.Id == request.AnswerId)
+            .ExecuteUpdateAsync(s => s.SetProperty(a => a.IsAccepted, true), cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task RemoveAcceptedAnswerAsync(int questionId, CancellationToken cancellationToken)
+    {
+        var userId = await currentUser.GetActiveUserIdAsync(context, cancellationToken);
+
+        await EnsureQuestionAuthorAsync(questionId, userId, cancellationToken);
+
+        await context.Answers
+            .Where(a => a.QuestionId == questionId && a.IsAccepted)
+            .ExecuteUpdateAsync(s => s.SetProperty(a => a.IsAccepted, false), cancellationToken);
+    }
+
+    private async Task EnsureQuestionAuthorAsync(int questionId, Guid userId, CancellationToken cancellationToken)
+    {
+        var authorId = await context.Questions
+            .Where(q => q.Id == questionId)
+            .Select(q => (Guid?)q.UserId)
+            .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new NotFoundException($"Question with id {questionId} was not found.");
+
+        if (authorId != userId)
+        {
+            throw new ForbiddenException("Only the question author can change the accepted answer.");
+        }
     }
 }

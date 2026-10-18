@@ -9,4 +9,6 @@ public interface IQuestionService
     Task<PagedResponse<QuestionSummaryResponse>> GetAsync(GetQuestionRequest request, CancellationToken cancellationToken);
     Task UpdateAsync(int id, UpdateQuestionRequest request, CancellationToken cancellationToken);
     Task DeleteAsync(int id, CancellationToken cancellationToken);
+    Task AcceptAnswerAsync(int questionId, AcceptAnswerRequest request, CancellationToken cancellationToken);
+    Task RemoveAcceptedAnswerAsync(int questionId, CancellationToken cancellationToken);
 }
