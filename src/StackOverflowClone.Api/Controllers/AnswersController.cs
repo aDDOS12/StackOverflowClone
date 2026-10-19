@@ -7,7 +7,7 @@ namespace StackOverflowClone.Api.Controllers;
 
 [ApiController]
 [Route("api/questions/{questionId:int}/answers")]
-public sealed class AnswerController(IAnswerService answerService) : ControllerBase
+public sealed class AnswersController(IAnswerService answerService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -24,7 +24,7 @@ public sealed class AnswerController(IAnswerService answerService) : ControllerB
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
-    [Authorize]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponse<AnswerResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(HttpValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

@@ -1,4 +1,6 @@
-﻿using StackOverflowClone.Application.Auth;
+﻿using StackOverflowClone.Application.Answers;
+using StackOverflowClone.Application.Auth;
+using StackOverflowClone.Application.Common.Models;
 using StackOverflowClone.Application.Questions;
 using StackOverflowClone.Application.Users;
 using System.Net.Http.Headers;
@@ -74,5 +76,25 @@ public abstract class IntegrationTestBase(ApiFactory factory) : IAsyncLifetime
             $"/api/questions/{questionId}", CancellationToken);
 
         return question!;
+    }
+
+    protected static async Task<int> CreateAnswerAsync(HttpClient client, int questionId)
+    {
+        var response = await client.PostAsJsonAsync(
+            $"/api/questions/{questionId}/answers",
+            new CreateAnswerRequest("You can use the Where method with a lambda that checks if a number is even."),
+            CancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var created = await response.Content.ReadFromJsonAsync<CreateAnswerResponse>(CancellationToken);
+        return created!.Id;
+    }
+
+    protected async Task<IReadOnlyList<AnswerResponse>> GetAnswersAsync(int questionId)
+    {
+        var page = await Client.GetFromJsonAsync<PagedResponse<AnswerResponse>>(
+            $"/api/questions/{questionId}/answers", CancellationToken);
+
+        return page!.Items;
     }
 }
