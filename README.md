@@ -121,6 +121,14 @@ If the browser warns about the certificate, trust the .NET development certifica
    dotnet dev-certs https --trust
 ```
 
+### Run tests
+
+```
+dotnet test
+```
+
+Integration tests use a separate LocalDB database (`StackOverflowCloneTests`), created automatically and cleaned before each test.
+
 ## Roadmap
 
 - [x] Phase 0 – Data model fixes, Clean Architecture structure, README
@@ -128,7 +136,7 @@ If the browser warns about the certificate, trust the .NET development certifica
 - [x] Phase 2 – Users and security: registration, JWT, authorization, account deletion (GDPR)
 - [x] Phase 3 – Questions, answers, comments, tags, pagination 
 - [x] Phase 4 – Business logic: voting, accepting answers
-- [ ] Phase 5 – Unit and integration tests
+- [x] Phase 5 – Unit and integration tests
 - [ ] Phase 6 – Docker and GitHub Actions CI
 
 ## License
