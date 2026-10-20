@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # Docker Compose secrets
 .env
+
+# EF Core migration bundles
+efbundle*
