@@ -7,6 +7,7 @@ using Respawn;
 using Respawn.Graph;
 using StackOverflowClone.Api;
 using StackOverflowClone.Infrastructure.Persistence;
+using Testcontainers.MsSql;
 
 namespace StackOverflowClone.IntegrationTests.Infrastructure;
 
@@ -14,18 +15,28 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private const string TestDatabaseName = "StackOverflowCloneTests";
 
-    private const string ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database={TestDatabaseName};Trusted_Connection=True;";
+    private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder()
+        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        .Build();
 
+    private string _connectionString = default!;
     private Respawner _respawner = default;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("ConnectionStrings:StackOverflowDbConnectionString", ConnectionString);
+        builder.UseSetting("ConnectionStrings:StackOverflowDbConnectionString", _connectionString);
         builder.UseSetting("Jwt:SigningKey", "integration-tests-signing-key-with-at-least-32-chars");
     }
 
     public async ValueTask InitializeAsync()
     {
+        await _sqlContainer.StartAsync();
+
+        _connectionString = new SqlConnectionStringBuilder(_sqlContainer.GetConnectionString())
+        {
+            InitialCatalog = TestDatabaseName
+        }.ConnectionString;
+
         using var scope = Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<StackOverflowContext>();
 
@@ -36,7 +47,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         await context.Database.MigrateAsync();
 
-        await using var connection = new SqlConnection(ConnectionString);
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
         _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
@@ -48,9 +59,15 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public async Task ResetDatabaseAsync()
     {
-        await using var connection = new SqlConnection(ConnectionString);
+        await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
         await _respawner.ResetAsync(connection);
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await base.DisposeAsync();
+        await _sqlContainer.DisposeAsync();
     }
 }

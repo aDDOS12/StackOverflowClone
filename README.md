@@ -79,6 +79,7 @@ Detailed reasoning is recorded as Architecture Decision Records in [`docs/decisi
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - SQL Server LocalDB (Windows; installed with Visual Studio or SQL Server Express)
+- [Docker](https://www.docker.com/) (for integration tests)
 
 ### Run locally
 
@@ -127,7 +128,7 @@ If the browser warns about the certificate, trust the .NET development certifica
 dotnet test
 ```
 
-Integration tests use a separate LocalDB database (`StackOverflowCloneTests`), created automatically and cleaned before each test.
+Integration tests run against a real SQL Server started automatically in a Docker container ([Testcontainers](https://dotnet.testcontainers.org/)), so Docker must be running.
 
 ## Roadmap
 
