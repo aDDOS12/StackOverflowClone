@@ -1,4 +1,5 @@
 # StackOverflowClone
+[![CI](https://github.com/aDDOS12/StackOverflowClone/actions/workflows/ci.yml/badge.svg)](https://github.com/aDDOS12/StackOverflowClone/actions/workflows/ci.yml)
 # This project aims to recreate the backend functionality of Stack Overflow.
 
 > **Work in progress.** See [Roadmap](#roadmap) for the current state.
