@@ -1,3 +1,5 @@
+x-db-connection-string: &db-connection-string "Server=db,1433;Database=StackOverflowClone;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True"
+
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -15,14 +17,28 @@ services:
       retries: 10
       start_period: 20s
 
-  api:
-    build: .
+  migrator:
+    build:
+      context: .
+      target: migrator
     depends_on:
       db:
         condition: service_healthy
     environment:
+      ConnectionStrings__StackOverflowDbConnectionString: *db-connection-string
+
+  api:
+    build:
+      context: .
+      target: runtime
+    depends_on:
+      db:
+        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
+    environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__StackOverflowDbConnectionString: "Server=db,1433;Database=StackOverflowClone;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True"
+      ConnectionStrings__StackOverflowDbConnectionString: *db-connection-string
       Jwt__SigningKey: ${JWT_SIGNING_KEY}
     ports:
       - "8080:8080"
