@@ -8,8 +8,10 @@ Accepted records are not edited. If a decision changes, a new ADR is added and t
 |---|---|---|
 | [0001](0001-soft-delete.md) | Use soft delete for user content and accounts | Accepted |
 | [0002](0002-clean-architecture.md) | Use Clean Architecture with separate projects | Accepted |
-| [0003](0003-database-choice.md) | Use SQL Server with LocalDB for development | Accepted |
+| [0003](0003-database-choice.md) | Use SQL Server with LocalDB for development | Accepted, partially superseded by [0006](0006-docker-ci-and-migration-bundle.md) |
 | [0004](0004-data-access.md) | Access data through an application-level DbContext interface | Accepted |
+| [0005](0005-voting.md) | Store votes per user and update scores atomically | Accepted |
+| [0006](0006-docker-ci-and-migration-bundle.md) | Use Docker for tests and local runs, and apply migrations with a bundle | Accepted |
 
 ## Template
 

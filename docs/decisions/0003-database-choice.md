@@ -1,6 +1,6 @@
 # 0003. Use SQL Server with LocalDB for development
 
-- **Status:** Accepted
+- **Status:** Accepted, partially superseded by [0006](0006-docker-ci-and-migration-bundle.md)
 - **Date:** 2026-09-24
 
 ## Context
