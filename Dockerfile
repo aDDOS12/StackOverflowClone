@@ -16,7 +16,25 @@ RUN dotnet publish src/StackOverflowClone.Api/StackOverflowClone.Api.csproj \
     --no-restore \
     --output /app/publish
 
-# ---------- Phase 2: runtime ----------
+# ---------- Phase 2: build migration bundle ----------
+FROM build AS migrations-build
+COPY dotnet-tools.json .
+RUN dotnet tool restore
+RUN dotnet ef migrations bundle \
+    --project src/StackOverflowClone.Infrastructure \
+    --startup-project src/StackOverflowClone.Api \
+    --configuration Release \
+    --output /app/efbundle
+
+# ---------- Phase 3: migrator image ----------
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS migrator
+WORKDIR /app
+COPY --from=migrations-build /app/efbundle .
+USER $APP_UID
+ENTRYPOINT ["./efbundle"]
+
+
+# ---------- Phase 4: runtime ----------
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
